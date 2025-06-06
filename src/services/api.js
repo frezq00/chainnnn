@@ -1,23 +1,15 @@
 // services/api.js
 const API_KEY = process.env.REACT_APP_MORALIS_API_KEY;
 
-// Check if API key is available
-if (!API_KEY) {
-  console.error('REACT_APP_MORALIS_API_KEY is not set in environment variables');
-}
-
 /**
  * Fetch trending tokens
  * @param {string} chain - Optional chain ID filter
  * @param {number} limit - Number of results to return
  * @returns {Promise} Promise resolving to trending tokens data
  */
+// services/api.js
 export const getTrendingTokens = async (chain = "", limit = 100) => {
   try {
-    if (!API_KEY) {
-      throw new Error('Moralis API key is not configured. Please check your .env file.');
-    }
-
     // Only add chain parameter if it's not empty
     const chainParam = chain ? `&chain=${chain}` : "";
     const url = `https://deep-index.moralis.io/api/v2.2/tokens/trending?limit=${limit}${chainParam}`;
@@ -31,10 +23,7 @@ export const getTrendingTokens = async (chain = "", limit = 100) => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Invalid or expired Moralis API key. Please check your API key in the .env file.');
-      }
-      throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -58,10 +47,6 @@ export const searchTokens = async (
   limit = 20
 ) => {
   try {
-    if (!API_KEY) {
-      throw new Error('Moralis API key is not configured. Please check your .env file.');
-    }
-
     const chainsParam = chains.join(",");
     const url = `https://deep-index.moralis.io/api/v2.2/tokens/search?query=${encodeURIComponent(
       query
@@ -75,10 +60,7 @@ export const searchTokens = async (
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Invalid or expired Moralis API key. Please check your API key in the .env file.');
-      }
-      throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -97,10 +79,6 @@ export const searchTokens = async (
  */
 export const getTokenPrice = async (chainId, tokenAddress) => {
   try {
-    if (!API_KEY) {
-      throw new Error('Moralis API key is not configured. Please check your .env file.');
-    }
-
     // Convert chainId for Moralis API format if needed
     const chain = formatChainForApi(chainId);
 
@@ -113,10 +91,7 @@ export const getTokenPrice = async (chainId, tokenAddress) => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Invalid or expired Moralis API key. Please check your API key in the .env file.');
-      }
-      throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     return await response.json();
@@ -149,10 +124,6 @@ const formatChainForApi = (chainId) => {
 
 export const getWalletNetWorth = async (address) => {
   try {
-    if (!API_KEY) {
-      throw new Error('Moralis API key is not configured. Please check your .env file.');
-    }
-
     // Construct query parameters for all supported chains
     const chains = [
       "eth",
@@ -181,10 +152,7 @@ export const getWalletNetWorth = async (address) => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Invalid or expired Moralis API key. Please check your API key in the .env file.');
-      }
-      throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     return await response.json();
@@ -196,10 +164,6 @@ export const getWalletNetWorth = async (address) => {
 
 export const getWalletTokens = async (address, chain) => {
   try {
-    if (!API_KEY) {
-      throw new Error('Moralis API key is not configured. Please check your .env file.');
-    }
-
     const url = `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${chain}`;
 
     const response = await fetch(url, {
@@ -210,10 +174,7 @@ export const getWalletTokens = async (address, chain) => {
     });
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Invalid or expired Moralis API key. Please check your API key in the .env file.');
-      }
-      throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     return await response.json();
