@@ -7,10 +7,16 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
-  const { signIn } = useAuth()
+  const { signIn, isSupabaseConfigured } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!isSupabaseConfigured) {
+      setError('Funkcje autentykacji są obecnie niedostępne. Skontaktuj się z administratorem.')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -45,6 +51,12 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
           </button>
         </div>
 
+        {!isSupabaseConfigured && (
+          <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-500 text-yellow-400 rounded">
+            Funkcje autentykacji są obecnie niedostępne. Aby włączyć logowanie, skonfiguruj Supabase.
+          </div>
+        )}
+
         {error && (
           <div className="mb-4 p-3 bg-red-900/30 border border-red-500 text-red-400 rounded">
             {error}
@@ -62,6 +74,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 bg-dex-bg-tertiary border border-dex-border rounded text-dex-text-primary focus:outline-none focus:border-dex-blue"
               required
+              disabled={!isSupabaseConfigured}
             />
           </div>
 
@@ -75,12 +88,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-3 py-2 bg-dex-bg-tertiary border border-dex-border rounded text-dex-text-primary focus:outline-none focus:border-dex-blue"
               required
+              disabled={!isSupabaseConfigured}
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isSupabaseConfigured}
             className="w-full py-2 bg-dex-blue hover:bg-blue-600 text-white rounded font-medium disabled:opacity-50"
           >
             {loading ? 'Logowanie...' : 'Zaloguj się'}
@@ -92,6 +106,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
           <button
             onClick={onSwitchToRegister}
             className="text-dex-blue hover:underline"
+            disabled={!isSupabaseConfigured}
           >
             Zarejestruj się
           </button>

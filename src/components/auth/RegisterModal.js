@@ -9,10 +9,16 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   
-  const { signUp } = useAuth()
+  const { signUp, isSupabaseConfigured } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    
+    if (!isSupabaseConfigured) {
+      setError('Funkcje autentykacji są obecnie niedostępne. Skontaktuj się z administratorem.')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -79,6 +85,12 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
           </button>
         </div>
 
+        {!isSupabaseConfigured && (
+          <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-500 text-yellow-400 rounded">
+            Funkcje autentykacji są obecnie niedostępne. Aby włączyć rejestrację, skonfiguruj Supabase.
+          </div>
+        )}
+
         {error && (
           <div className="mb-4 p-3 bg-red-900/30 border border-red-500 text-red-400 rounded">
             {error}
@@ -96,6 +108,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               onChange={(e) => setFullName(e.target.value)}
               className="w-full px-3 py-2 bg-dex-bg-tertiary border border-dex-border rounded text-dex-text-primary focus:outline-none focus:border-dex-blue"
               required
+              disabled={!isSupabaseConfigured}
             />
           </div>
 
@@ -109,6 +122,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 bg-dex-bg-tertiary border border-dex-border rounded text-dex-text-primary focus:outline-none focus:border-dex-blue"
               required
+              disabled={!isSupabaseConfigured}
             />
           </div>
 
@@ -123,12 +137,13 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               className="w-full px-3 py-2 bg-dex-bg-tertiary border border-dex-border rounded text-dex-text-primary focus:outline-none focus:border-dex-blue"
               minLength={6}
               required
+              disabled={!isSupabaseConfigured}
             />
           </div>
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isSupabaseConfigured}
             className="w-full py-2 bg-dex-blue hover:bg-blue-600 text-white rounded font-medium disabled:opacity-50"
           >
             {loading ? 'Rejestracja...' : 'Zarejestruj się'}
@@ -140,6 +155,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
           <button
             onClick={onSwitchToLogin}
             className="text-dex-blue hover:underline"
+            disabled={!isSupabaseConfigured}
           >
             Zaloguj się
           </button>

@@ -11,7 +11,7 @@ const FavoriteButton = ({
   className = "",
   size = "md" 
 }) => {
-  const { user } = useAuth()
+  const { user, isSupabaseConfigured } = useAuth()
   const { favorites, addFavorite, removeFavorite, loading } = useFavorites()
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -22,8 +22,12 @@ const FavoriteButton = ({
   const handleToggleFavorite = async (e) => {
     e.stopPropagation() // Zapobiega nawigacji gdy przycisk jest w linku
     
+    if (!isSupabaseConfigured) {
+      alert('Funkcje ulubionych są obecnie niedostępne. Skonfiguruj Supabase aby je włączyć.')
+      return
+    }
+    
     if (!user) {
-      // Można tutaj pokazać modal logowania
       alert('Zaloguj się, aby dodać tokeny do ulubionych')
       return
     }
@@ -46,6 +50,7 @@ const FavoriteButton = ({
       }
     } catch (error) {
       console.error('Błąd przy zmianie ulubionych:', error)
+      alert('Wystąpił błąd. Spróbuj ponownie.')
     } finally {
       setIsProcessing(false)
     }
@@ -61,6 +66,11 @@ const FavoriteButton = ({
     sm: 'p-1',
     md: 'p-1.5',
     lg: 'p-2'
+  }
+
+  // Jeśli Supabase nie jest skonfigurowane, nie pokazuj przycisku
+  if (!isSupabaseConfigured) {
+    return null
   }
 
   return (

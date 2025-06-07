@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 const AuthContext = createContext({})
 
@@ -17,16 +17,27 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Sprawdź czy Supabase jest skonfigurowane
+    if (!isSupabaseConfigured()) {
+      console.warn('Supabase nie jest skonfigurowane - funkcje autentykacji będą niedostępne')
+      setLoading(false)
+      return
+    }
+
     // Pobierz aktualną sesję
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        await fetchProfile(session.user.id)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setUser(session?.user ?? null)
+        
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        }
+      } catch (error) {
+        console.error('Błąd pobierania sesji:', error)
+      } finally {
+        setLoading(false)
       }
-      
-      setLoading(false)
     }
 
     getSession()
@@ -50,6 +61,8 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   const fetchProfile = async (userId) => {
+    if (!isSupabaseConfigured()) return
+
     try {
       const { data, error } = await supabase
         .from('user_profiles')
@@ -57,7 +70,7 @@ export const AuthProvider = ({ children }) => {
         .eq('id', userId)
         .single()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== 'PGRST116' && error.code !== 'SUPABASE_NOT_CONFIGURED') {
         console.error('Błąd pobierania profilu:', error)
         return
       }
@@ -69,6 +82,10 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signUp = async (email, password, fullName) => {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase nie jest skonfigurowane. Skontaktuj się z administratorem.')
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -84,6 +101,10 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signIn = async (email, password) => {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase nie jest skonfigurowane. Skontaktuj się z administratorem.')
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -94,11 +115,19 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signOut = async () => {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase nie jest skonfigurowane. Skontaktuj się z administratorem.')
+    }
+
     const { error } = await supabase.auth.signOut()
     if (error) throw error
   }
 
   const updateProfile = async (updates) => {
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase nie jest skonfigurowane. Skontaktuj się z administratorem.')
+    }
+
     if (!user) throw new Error('Brak zalogowanego użytkownika')
 
     const { data, error } = await supabase
@@ -122,7 +151,8 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     updateProfile,
-    fetchProfile
+    fetchProfile,
+    isSupabaseConfigured: isSupabaseConfigured()
   }
 
   return (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState([])
@@ -9,7 +9,7 @@ export const useFavorites = () => {
 
   // Pobierz ulubione tokeny użytkownika
   const fetchFavorites = async () => {
-    if (!user) {
+    if (!user || !isSupabaseConfigured()) {
       setFavorites([])
       setLoading(false)
       return
@@ -22,7 +22,7 @@ export const useFavorites = () => {
         .eq('user_id', user.id)
         .order('added_at', { ascending: false })
 
-      if (error) throw error
+      if (error && error.code !== 'SUPABASE_NOT_CONFIGURED') throw error
 
       setFavorites(data || [])
     } catch (error) {
@@ -36,6 +36,7 @@ export const useFavorites = () => {
   // Dodaj token do ulubionych
   const addFavorite = async ({ tokenAddress, chainId, tokenName, tokenSymbol, tokenLogo }) => {
     if (!user) throw new Error('Użytkownik nie jest zalogowany')
+    if (!isSupabaseConfigured()) throw new Error('Supabase nie jest skonfigurowane')
 
     try {
       const { data, error } = await supabase
@@ -64,6 +65,7 @@ export const useFavorites = () => {
   // Usuń token z ulubionych
   const removeFavorite = async (tokenAddress, chainId) => {
     if (!user) throw new Error('Użytkownik nie jest zalogowany')
+    if (!isSupabaseConfigured()) throw new Error('Supabase nie jest skonfigurowane')
 
     try {
       const { error } = await supabase
@@ -103,6 +105,7 @@ export const useFavorites = () => {
     addFavorite,
     removeFavorite,
     isFavorite,
-    refetch: fetchFavorites
+    refetch: fetchFavorites,
+    isSupabaseConfigured: isSupabaseConfigured()
   }
 }
