@@ -4,14 +4,24 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
 
+console.log('🔍 Debugowanie Supabase:')
+console.log('URL:', supabaseUrl ? 'USTAWIONY' : 'BRAK')
+console.log('Key:', supabaseAnonKey ? 'USTAWIONY' : 'BRAK')
+console.log('URL value:', supabaseUrl)
+console.log('Key value:', supabaseAnonKey ? supabaseAnonKey.substring(0, 20) + '...' : 'BRAK')
+
 // Jeśli brak zmiennych, utwórz placeholder client
 let supabase
 
 if (supabaseUrl && supabaseAnonKey) {
+  console.log('✅ Tworzenie prawdziwego klienta Supabase')
   supabase = createClient(supabaseUrl, supabaseAnonKey)
 } else {
   // Placeholder client - nie będzie działał, ale nie spowoduje błędu
-  console.warn('Zmienne środowiskowe Supabase nie są skonfigurowane. Funkcje autentykacji będą niedostępne.')
+  console.error('❌ Zmienne środowiskowe Supabase nie są skonfigurowane!')
+  console.error('Sprawdź plik .env i upewnij się, że zawiera:')
+  console.error('REACT_APP_SUPABASE_URL=https://vwblpwpdhwscbwxvtref.supabase.co')
+  console.error('REACT_APP_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
   
   supabase = {
     auth: {
