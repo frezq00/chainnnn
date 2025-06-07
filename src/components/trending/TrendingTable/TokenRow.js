@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import FavoriteButton from "../../favorites/FavoriteButton";
 import {
   formatNumber,
   formatAge,
@@ -77,6 +78,15 @@ const TokenRow = ({ token, rank }) => {
           }}
         >
           <div className="flex items-center">
+            <FavoriteButton
+              tokenAddress={token.tokenAddress}
+              chainId={getChainPath(token.chainId)}
+              tokenName={token.name}
+              tokenSymbol={token.symbol}
+              tokenLogo={token.logo}
+              size="sm"
+              className="mr-2"
+            />
             <img
               src={token.logo || "/images/tokens/default-token.svg"}
               alt={token.symbol}

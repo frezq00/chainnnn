@@ -1,1 +1,99 @@
-(Content omitted)
+import React, { useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
+import { useFavorites } from '../../hooks/useFavorites'
+
+const FavoriteButton = ({ 
+  tokenAddress, 
+  chainId, 
+  tokenName, 
+  tokenSymbol, 
+  tokenLogo,
+  className = "",
+  size = "md" 
+}) => {
+  const { user } = useAuth()
+  const { favorites, addFavorite, removeFavorite, loading } = useFavorites()
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const isFavorite = favorites.some(
+    fav => fav.token_address === tokenAddress && fav.chain_id === chainId
+  )
+
+  const handleToggleFavorite = async (e) => {
+    e.stopPropagation() // Zapobiega nawigacji gdy przycisk jest w linku
+    
+    if (!user) {
+      // Można tutaj pokazać modal logowania
+      alert('Zaloguj się, aby dodać tokeny do ulubionych')
+      return
+    }
+
+    if (isProcessing) return
+
+    setIsProcessing(true)
+    
+    try {
+      if (isFavorite) {
+        await removeFavorite(tokenAddress, chainId)
+      } else {
+        await addFavorite({
+          tokenAddress,
+          chainId,
+          tokenName,
+          tokenSymbol,
+          tokenLogo
+        })
+      }
+    } catch (error) {
+      console.error('Błąd przy zmianie ulubionych:', error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const sizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-5 h-5',
+    lg: 'w-6 h-6'
+  }
+
+  const buttonSizeClasses = {
+    sm: 'p-1',
+    md: 'p-1.5',
+    lg: 'p-2'
+  }
+
+  return (
+    <button
+      onClick={handleToggleFavorite}
+      disabled={isProcessing || loading}
+      className={`
+        ${buttonSizeClasses[size]}
+        ${className}
+        rounded-full transition-all duration-200 
+        ${isFavorite 
+          ? 'text-red-500 hover:text-red-400' 
+          : 'text-dex-text-tertiary hover:text-red-500'
+        }
+        ${isProcessing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-dex-bg-highlight'}
+      `}
+      title={isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
+    >
+      <svg 
+        className={`${sizeClasses[size]} transition-transform ${isProcessing ? 'scale-90' : 'hover:scale-110'}`}
+        fill={isFavorite ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={isFavorite ? 0 : 2}
+          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+        />
+      </svg>
+    </button>
+  )
+}
+
+export default FavoriteButton

@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate, NavLink } from "react-router-dom";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const NavigationMenu = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="mt-8">
@@ -23,6 +25,23 @@ const NavigationMenu = () => {
           <span className="mr-3 w-5 text-center">📈</span>
           Trending
         </NavLink>
+        
+        {user && (
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-2.5 text-sm rounded transition-colors ${
+                isActive
+                  ? "bg-dex-bg-highlight text-dex-text-primary"
+                  : "text-dex-text-secondary hover:bg-dex-bg-highlight hover:text-dex-text-primary"
+              }`
+            }
+          >
+            <span className="mr-3 w-5 text-center">📊</span>
+            Dashboard
+          </NavLink>
+        )}
+        
         <NavLink
           to="/pumpfun"
           className={({ isActive }) =>
