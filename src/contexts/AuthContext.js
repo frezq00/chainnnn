@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }) => {
     if (!isSupabaseConfigured()) return
 
     try {
+      console.log('🔍 Pobieranie profilu dla użytkownika:', userId)
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
@@ -71,13 +72,14 @@ export const AuthProvider = ({ children }) => {
         .single()
 
       if (error && error.code !== 'PGRST116' && error.code !== 'SUPABASE_NOT_CONFIGURED') {
-        console.error('Błąd pobierania profilu:', error)
+        console.error('❌ Błąd pobierania profilu:', error)
         return
       }
 
+      console.log('✅ Profil pobrany:', data)
       setProfile(data)
     } catch (error) {
-      console.error('Błąd pobierania profilu:', error)
+      console.error('❌ Błąd pobierania profilu (catch):', error)
     }
   }
 
@@ -86,6 +88,8 @@ export const AuthProvider = ({ children }) => {
       throw new Error('Supabase nie jest skonfigurowane. Skontaktuj się z administratorem.')
     }
 
+    console.log('🔍 Rejestracja użytkownika:', { email, fullName })
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -96,7 +100,12 @@ export const AuthProvider = ({ children }) => {
       }
     })
 
-    if (error) throw error
+    if (error) {
+      console.error('❌ Błąd rejestracji:', error)
+      throw error
+    }
+    
+    console.log('✅ Rejestracja zakończona:', data)
     return data
   }
 
