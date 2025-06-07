@@ -15,19 +15,35 @@ const FavoriteButton = ({
   const { favorites, addFavorite, removeFavorite, loading } = useFavorites()
   const [isProcessing, setIsProcessing] = useState(false)
 
+  console.log('🔍 FavoriteButton Debug:', {
+    tokenAddress,
+    chainId,
+    tokenSymbol,
+    isSupabaseConfigured,
+    user: !!user,
+    favoritesCount: favorites.length,
+    loading
+  })
+
   const isFavorite = favorites.some(
     fav => fav.token_address === tokenAddress && fav.chain_id === chainId
   )
 
+  console.log('❤️ Is favorite:', isFavorite)
+
   const handleToggleFavorite = async (e) => {
     e.stopPropagation() // Zapobiega nawigacji gdy przycisk jest w linku
     
+    console.log('🔍 Kliknięto przycisk ulubionych')
+    
     if (!isSupabaseConfigured) {
+      console.log('❌ Supabase nie jest skonfigurowane')
       alert('Funkcje ulubionych są obecnie niedostępne. Skonfiguruj Supabase aby je włączyć.')
       return
     }
     
     if (!user) {
+      console.log('❌ Użytkownik nie jest zalogowany')
       alert('Zaloguj się, aby dodać tokeny do ulubionych')
       return
     }
@@ -38,8 +54,10 @@ const FavoriteButton = ({
     
     try {
       if (isFavorite) {
+        console.log('🗑️ Usuwanie z ulubionych...')
         await removeFavorite(tokenAddress, chainId)
       } else {
+        console.log('➕ Dodawanie do ulubionych...')
         await addFavorite({
           tokenAddress,
           chainId,
@@ -48,8 +66,9 @@ const FavoriteButton = ({
           tokenLogo
         })
       }
+      console.log('✅ Operacja zakończona pomyślnie')
     } catch (error) {
-      console.error('Błąd przy zmianie ulubionych:', error)
+      console.error('❌ Błąd przy zmianie ulubionych:', error)
       alert('Wystąpił błąd. Spróbuj ponownie.')
     } finally {
       setIsProcessing(false)
@@ -70,6 +89,7 @@ const FavoriteButton = ({
 
   // Jeśli Supabase nie jest skonfigurowane, nie pokazuj przycisku
   if (!isSupabaseConfigured) {
+    console.log('🚫 Nie pokazuję przycisku - Supabase nie skonfigurowane')
     return null
   }
 
