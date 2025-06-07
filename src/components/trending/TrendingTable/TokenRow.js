@@ -69,24 +69,24 @@ const TokenRow = ({ token, rank }) => {
     >
       <td className="px-4 py-3 text-dex-text-tertiary text-center">{rank}</td>
       <td className="px-4 py-3">
-        <Link
-          to={`/${getChainPath(token.chainId)}/${token.tokenAddress}`}
-          className="flex items-center"
-          onClick={(e) => {
-            // Prevent event propagation to avoid conflict with the row click handler
-            e.stopPropagation();
-          }}
-        >
-          <div className="flex items-center">
-            <FavoriteButton
-              tokenAddress={token.tokenAddress}
-              chainId={getChainPath(token.chainId)}
-              tokenName={token.name}
-              tokenSymbol={token.symbol}
-              tokenLogo={token.logo}
-              size="sm"
-              className="mr-2"
-            />
+        <div className="flex items-center">
+          <FavoriteButton
+            tokenAddress={token.tokenAddress}
+            chainId={getChainPath(token.chainId)}
+            tokenName={token.name}
+            tokenSymbol={token.symbol}
+            tokenLogo={token.logo}
+            size="sm"
+            className="mr-2"
+          />
+          <Link
+            to={`/${getChainPath(token.chainId)}/${token.tokenAddress}`}
+            className="flex items-center flex-1"
+            onClick={(e) => {
+              // Prevent event propagation to avoid conflict with the row click handler
+              e.stopPropagation();
+            }}
+          >
             <img
               src={token.logo || "/images/tokens/default-token.svg"}
               alt={token.symbol}
@@ -110,8 +110,8 @@ const TokenRow = ({ token, rank }) => {
                 {token.name}
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </td>
       <td className="px-4 py-3 text-right">${formatPrice(token.usdPrice)}</td>
       <td className="px-4 py-3 text-right text-dex-text-secondary">
