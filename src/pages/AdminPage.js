@@ -22,12 +22,12 @@ const AdminPage = () => {
   const fetchData = async () => {
     try {
       const [usersResponse, favoritesResponse] = await Promise.all([
-        fetch('/api/admin/users', {
+        fetch('http://localhost:3000/api/admin/users', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           }
         }),
-        fetch('/api/admin/favorites', {
+        fetch('http://localhost:3000/api/admin/favorites', {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           }
@@ -53,7 +53,7 @@ const AdminPage = () => {
     if (!confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -72,7 +72,7 @@ const AdminPage = () => {
     const newRole = currentRole === 'admin' ? 'user' : 'admin';
     
     try {
-      const response = await fetch(`/api/admin/users/${userId}/role`, {
+      const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

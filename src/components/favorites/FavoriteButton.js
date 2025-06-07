@@ -14,7 +14,7 @@ const FavoriteButton = ({ token, chainId }) => {
 
   const checkFavoriteStatus = async () => {
     try {
-      const response = await fetch(`/api/favorites/check`, {
+      const response = await fetch(`http://localhost:3000/api/favorites/check`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ const FavoriteButton = ({ token, chainId }) => {
 
     setLoading(true);
     try {
-      const endpoint = isFavorite ? '/api/favorites/remove' : '/api/favorites/add';
+      const endpoint = isFavorite ? 'http://localhost:3000/api/favorites/remove' : 'http://localhost:3000/api/favorites/add';
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {

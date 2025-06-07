@@ -20,7 +20,7 @@ const FavoritesPage = () => {
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch('/api/favorites', {
+      const response = await fetch('http://localhost:3000/api/favorites', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
@@ -41,7 +41,7 @@ const FavoritesPage = () => {
 
   const removeFavorite = async (tokenAddress, chainId) => {
     try {
-      const response = await fetch('/api/favorites/remove', {
+      const response = await fetch('http://localhost:3000/api/favorites/remove', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
