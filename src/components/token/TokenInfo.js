@@ -1,6 +1,5 @@
 // components/token/TokenInfo.js
 import React, { useState, useEffect, useRef } from "react";
-import FavoriteButton from "../favorites/FavoriteButton";
 
 const API_KEY = process.env.REACT_APP_MORALIS_API_KEY;
 
@@ -419,9 +418,6 @@ const TokenInfo = ({ token, pair, timeFrame, chainId }) => {
               <span className="ml-2 text-sm text-dex-text-secondary">
                 ({tokenMetadata?.symbol || token.symbol})
               </span>
-              <div className="ml-auto">
-                <FavoriteButton token={token} chainId={chainId} />
-              </div>
             </h1>
             <div className="text-sm text-dex-text-secondary">
               {pair.pairLabel} on {pair.exchangeName}

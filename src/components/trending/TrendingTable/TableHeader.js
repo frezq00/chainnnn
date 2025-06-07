@@ -82,9 +82,6 @@ const TableHeader = ({ sortBy, sortDirection, onSortChange }) => {
         >
           MCAP {renderSortIcon("marketCap")}
         </th>
-        <th className="sticky top-0 bg-dex-bg-primary px-4 py-3 text-right">
-          FAV
-        </th>
       </tr>
     </thead>
   );

@@ -2,7 +2,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import FavoriteButton from "../../favorites/FavoriteButton";
 import {
   formatNumber,
   formatAge,
@@ -142,11 +141,6 @@ const TokenRow = ({ token, rank }) => {
         ${formatNumber(token.liquidityUsd)}
       </td>
       <td className="px-4 py-3 text-right">${formatNumber(token.marketCap)}</td>
-      <td className="px-4 py-3 text-right">
-        <div onClick={(e) => e.stopPropagation()}>
-          <FavoriteButton token={token} chainId={token.chainId} />
-        </div>
-      </td>
     </tr>
   );
 };
